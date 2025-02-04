@@ -1,0 +1,48 @@
+---
+version: 24.06
+
+server:
+  ssl:
+    front_end:
+      certificate: "@iag_keydb.pem"
+
+policies:
+  http_transformations:
+    request:
+      - name: map_to_oauth2_wk_config
+        paths:
+          - "/oauth2/.well-known/oauth-authorization-server"
+        method: "GET"
+        rule: |
+          -- Simply route the request to .well-known/openid-configuration
+          HTTPRequest.setURL("/oauth2/.well-known/openid-configuration")
+    response:
+      - name: map_from_oauth2_wk_config
+        paths:
+          - "/oauth2/.well-known/oauth-authorization-server"
+        method: "GET"
+        rule: |
+          -- We're going to inject "code_challenge_methods_supported": [ "plain" ]
+          -- into the response payload
+          
+          local cjson = require "cjson"
+          local payload = cjson.decode(HTTPResponse.getBody())
+
+          local pkceMethods = { "plain" }
+          setmetatable(pkceMethods, cjson.array_mt)
+          payload["code_challenge_methods_supported"] = pkceMethods
+          HTTPResponse.setBody(cjson.encode(payload))
+
+resource_servers:
+  - path: /oauth2
+    transparent_path: true
+    connection_type: ssl
+    identity_headers:
+      basic_auth:
+        mode: ignore
+    servers:
+      - host: iviadcop
+        port: 8436
+        ssl:
+          certificate: "@iviadcop_ca.pem"
+

@@ -1,0 +1,60 @@
+services:
+  iviadcldap:
+    container_name: iviadcldap
+    image: bitnami/openldap:latest
+    environment:
+      LDAP_ADMIN_USERNAME: root
+      LDAP_ADMIN_PASSWORD: passw0rd
+      LDAP_USERS: user_1,user_2
+      LDAP_PASSWORDS: secret,secret
+      LDAP_ROOT: dc=ibm,dc=com
+      LDAP_ADMIN_DN: cn=root,dc=ibm,dc=com
+  iviadcdb:
+    container_name: iviadcdb
+    image: icr.io/ivia/ivia-postgresql:11.0.0.0
+    environment:
+      POSTGRES_USER: iviadc
+      POSTGRES_PASSWORD: passw0rd
+      POSTGRES_SSL_KEYDB: /var/postgres/config/pg_keydb.pem
+    volumes:
+      - ./postgres_config:/var/postgres/config:ro
+      - ./postgres_config/postgresql_update_hba.sh:/docker-entrypoint-initdb.d/postgresql_update_hba.sh:ro
+      - ./postgres_config/load/update_isvaop_24.12.sql:/docker-entrypoint-initdb.d/load/update_isvaop_24.12.sql
+  iviadcop:
+    container_name: iviadcop
+    image: icr.io/ivia/ivia-oidc-provider:24.12
+    ports:
+      - "8436:8436"
+    volumes:
+      - ./oidc_provider_config:/var/isvaop/config:ro
+    depends_on:
+      - iviadcdb
+      - iviadcldap
+  iviadcgw:
+    container_name: iviadcgw
+    image: icr.io/ibmappgateway/ibm-application-gateway:24.12
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./iag_config:/var/iag/config:ro
+    depends_on:
+      - iviadcop
+  iviadc:
+    container_name: iviadc
+    image: icr.io/ivia/ivia-digital-credentials:24.12
+    ports:
+      - "9720:9720"
+    volumes:
+      - ./config:/var/config:ro
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+      YAML_FILE: /var/config/config.yaml
+      IBM_API_EXPLORER: 1
+    depends_on:
+      - iviadcdb
+      - iviadcop
+      - iviadcgw
+networks:
+  default:
+    external: true
+    name: iviadc-default
