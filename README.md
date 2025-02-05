@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-1. An IVIADC license key
+1. An IVIADC license key. You may obtain a trial key from [here](https://isva-trial.verify.ibm.com/).
 
 2. `docker` / `docker-compose` or equivalents
 
