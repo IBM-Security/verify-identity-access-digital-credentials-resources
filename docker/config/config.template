@@ -10,8 +10,7 @@ general:
     enable_doc_cache: false
     tls:
       private_key: !file "/var/config/dc_priv.key"
-      public_key: !file "/var/config/dc_pub.crt"
-      ca_cert: !file "/var/config/dc_pub.crt"
+      cert: !file "/var/config/dc_pub.crt"
     wallet:
       name: "vc"
       encryption_key: "my-key"
