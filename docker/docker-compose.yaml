@@ -1,23 +1,4 @@
 services:
-  hyperledgerindy:
-    container_name: hyperledgerindy
-    image: us.icr.io/sps-ividc/hyperledger-indy:latest
-    restart: unless-stopped
-    hostname: hyperledgerindy
-    environment:
-      EXTERNAL_IP: hyperledgerindy
-    ports:
-      - "9730:9730"
-      - "9731:9731"
-      - "9732:9732"
-      - "9733:9733"
-      - "9734:9734"
-      - "9735:9735"
-      - "9736:9736"
-      - "9737:9737"
-      - "9738:9738"
-      - "9739:9739"
-      - "9740:9740"
   iviadcldap:
     container_name: iviadcldap
     image: bitnami/openldap:latest
@@ -41,7 +22,7 @@ services:
       - ./postgres_config/load/update_isvaop_24.12.sql:/docker-entrypoint-initdb.d/load/update_isvaop_24.12.sql
   iviadcop:
     container_name: iviadcop
-    image: icr.io/ivia/ivia-oidc-provider:24.12
+    image: icr.io/ivia/ivia-oidc-provider:25.03
     ports:
       - "8436:8436"
     volumes:
@@ -51,7 +32,7 @@ services:
       - iviadcldap
   iviadcgw:
     container_name: iviadcgw
-    image: icr.io/ibmappgateway/ibm-application-gateway:24.12
+    image: icr.io/ibmappgateway/ibm-application-gateway:25.03
     ports:
       - "8443:8443"
     volumes:
@@ -60,7 +41,7 @@ services:
       - iviadcop
   iviadc:
     container_name: iviadc
-    image: icr.io/ivia/ivia-digital-credentials:24.12
+    image: icr.io/ivia/ivia-digital-credentials:25.03
     ports:
       - "9720:9720"
     volumes:
@@ -69,16 +50,10 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       YAML_FILE: /var/config/config.yaml
       IBM_API_EXPLORER: 1
-    entrypoint:
-    - /bin/bash
-    - -c
-    - |
-      sleep 5 && /home/agency/bin/start-server
     depends_on:
       - iviadcdb
       - iviadcop
       - iviadcgw
-      - hyperledgerindy
 networks:
   default:
     external: true

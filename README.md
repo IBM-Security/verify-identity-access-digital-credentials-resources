@@ -9,10 +9,10 @@
 3. Access to the following docker containers:
 
     *  bitnami/openldap:latest
-    *  icr.io/ivia/ivia-digital-credentials:24.12
+    *  icr.io/ivia/ivia-digital-credentials:25.03
     *  icr.io/ivia/ivia-postgresql:11.0.0.0
-    *  icr.io/ivia/ivia-oidc-provider:24.12
-    *  icr.io/ibmappgateway/ibm-application-gateway:24.12
+    *  icr.io/ivia/ivia-oidc-provider:25.03
+    *  icr.io/ibmappgateway/ibm-application-gateway:25.03
 
 
 ## One-time setup
@@ -56,5 +56,5 @@
     ```bash
     cd ../demonstration
     pip3 install -r ./requirements.txt
-    python3 run_demonstration.py mdoc
+    python3 run_demonstration.py mdoc_mdl
     ```
