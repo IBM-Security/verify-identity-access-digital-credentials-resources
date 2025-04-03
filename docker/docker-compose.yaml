@@ -1,23 +1,4 @@
 services:
-  hyperledgerindy:
-    container_name: hyperledgerindy
-    image: us.icr.io/sps-ividc/hyperledger-indy:latest
-    restart: unless-stopped
-    hostname: hyperledgerindy
-    environment:
-      EXTERNAL_IP: hyperledgerindy
-    ports:
-      - "9730:9730"
-      - "9731:9731"
-      - "9732:9732"
-      - "9733:9733"
-      - "9734:9734"
-      - "9735:9735"
-      - "9736:9736"
-      - "9737:9737"
-      - "9738:9738"
-      - "9739:9739"
-      - "9740:9740"
   iviadcldap:
     container_name: iviadcldap
     image: bitnami/openldap:latest
@@ -69,16 +50,10 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
       YAML_FILE: /var/config/config.yaml
       IBM_API_EXPLORER: 1
-    entrypoint:
-    - /bin/bash
-    - -c
-    - |
-      sleep 5 && /home/agency/bin/start-server
     depends_on:
       - iviadcdb
       - iviadcop
       - iviadcgw
-      - hyperledgerindy
 networks:
   default:
     external: true
