@@ -15,10 +15,33 @@ echo
 
 openssl x509 -in $OP_PUBLIC_CERT -text
 
-cp -f provider.template provider.yml
-for filename in ${OP_PUBLIC_CERT} ${OP_PRIVATE_KEY} ${DB_CERT}; do
-    sed -I "" 's/<'${filename}'>/'$(cat ${filename} | base64)'/g' provider.yml
-done
+python <<EOF
+import base64
+f = open('provider.template', 'r')
+provider_template = f.read()
+f.close()
+f = open('$OP_PRIVATE_KEY', 'rb')
+op_key = base64.b64encode(f.read()).decode()
+f.close()
+f = open('$OP_PUBLIC_CERT', 'rb')
+op_crt = base64.b64encode(f.read()).decode()
+f.close()
+f = open('$DB_CERT', 'rb')
+db_crt = base64.b64encode(f.read()).decode()
+macros = {
+    "$OP_PRIVATE_KEY": op_key,
+    "$OP_PUBLIC_CERT": op_crt,
+    "$DB_CERT": db_crt
+}
+print(provider_template)
+print(macros)
+for key in macros:
+    print(key)
+    provider_template = provider_template.replace('<' + key + '>', macros[key])
+f = open('provider.yml', 'w')
+f.write(provider_template)
+f.close()
+EOF
 
 TARGET_CA=iviadcop_ca.pem
 cp -f ${OP_PUBLIC_CERT} ../config/${TARGET_CA}
