@@ -11,18 +11,17 @@ services:
       LDAP_ADMIN_DN: cn=root,dc=ibm,dc=com
   iviadcdb:
     container_name: iviadcdb
-    image: icr.io/ivia/ivia-postgresql:11.0.0.0
+    image: icr.io/ivia/ivia-postgresql:11.0.1.0
     environment:
       POSTGRES_USER: iviadc
       POSTGRES_PASSWORD: passw0rd
-      POSTGRES_SSL_KEYDB: /var/postgres/config/pg_keydb.pem
+      POSTGRES_SSL_KEYDB: /var/postgres/config/iviadcdb_priv_pub.pem
     volumes:
       - ./postgres_config:/var/postgres/config:ro
       - ./postgres_config/postgresql_update_hba.sh:/docker-entrypoint-initdb.d/postgresql_update_hba.sh:ro
-      - ./postgres_config/load/update_isvaop_24.12.sql:/docker-entrypoint-initdb.d/load/update_isvaop_24.12.sql
   iviadcop:
     container_name: iviadcop
-    image: icr.io/ivia/ivia-oidc-provider:25.03
+    image: icr.io/ivia/ivia-oidc-provider:25.06
     ports:
       - "8436:8436"
     volumes:
@@ -32,7 +31,7 @@ services:
       - iviadcldap
   iviadcgw:
     container_name: iviadcgw
-    image: icr.io/ibmappgateway/ibm-application-gateway:25.03
+    image: icr.io/ibmappgateway/ibm-application-gateway:25.06
     ports:
       - "8443:8443"
     volumes:
@@ -41,7 +40,7 @@ services:
       - iviadcop
   iviadc:
     container_name: iviadc
-    image: icr.io/ivia/ivia-digital-credentials:25.03
+    image: icr.io/ivia/ivia-digital-credentials:25.06
     ports:
       - "9720:9720"
     volumes:

@@ -2,6 +2,7 @@
 *.key
 *.cert
 *.crt
-docker/oidc_provider_config/provider.yml
+*.bak
 docker/config/config.yaml
 demonstration/build/*
+**/__pycache__

@@ -3,24 +3,25 @@ general:
     license:
       accept: true
       key: "LICENSE_PLACEHOLDER"
-    url: "https://iviadc:9720"
+    url: "https://iviadcgw:8443/diagency"
+    log_level: "info"
     request_log:
       enabled: false
       format: ":date[iso] :method :url :http-version :status"
     enable_doc_cache: false
     tls:
-      private_key: !file "/var/config/dc_priv.key"
-      cert: !file "/var/config/dc_pub.crt"
+      private_key: !file "/var/config/iviadc_priv.key"
+      cert: !file "/var/config/iviadc_pub.crt"
     wallet:
       name: "vc"
       encryption_key: "my-key"
     auth:
       jwt:
         header_name: my-jwt
-        cert: !file "/var/config/dc_pub.crt"
+        cert: !file "/var/config/iviadc_pub.crt"
       dynamic_client_registration:
         endpoint: "https://iviadcgw:8443/oauth2"
-        ca_cert: !file "/var/config/iviadcgw_ca.pem"
+        ca_cert: !file "/var/config/iviadcgw_pub.crt"
         client_id: "admin"
         client_secret: "secret"
         cache_access_token: true
@@ -55,7 +56,7 @@ database:
     password: "passw0rd"
     ssl: true
     skip_hostname_verify: false
-    ca_cert: !file "/var/config/iviadcdb_ca.pem"
+    ca_cert: !file "/var/config/iviadcdb_pub.crt"
   pool:
     min_connections: 5
     max_connections: 20

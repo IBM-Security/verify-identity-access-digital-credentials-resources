@@ -17,7 +17,7 @@ definition:
       strategy: sha512
       script: null    
   ignore_unknown_authorization_details_type: false
-  base_url: https://iviadcop:8443
+  base_url: https://iviadcgw:8443/oauth2
   token_settings:
     issuer: https://isvaop.ibm.com
     signing_alg: RS256
@@ -37,7 +37,7 @@ logging:
   level: debug
 
 authentication:
-  endpoint: ""
+  endpoint: "/basiclogin"
   callback_param_name: ""
   subject_attribute_name: ""
   credentials_jwt:
@@ -55,23 +55,23 @@ keystore:
     type: pem
     certificate:
       - label: server_cert
-        content: B64:<op_server_pub.crt>
+        content: "@iviadcop_pub.crt"
 
     key:
       - label: server_key
-        content: B64:<op_server_priv.key>
+        content: "@iviadcop_priv.key"
 
   - name: isvaop_signing
     type: pem
     key:
       - label: rsakey
-        content: B64:<op_server_priv.key>
+        content: "@iviadcop_priv.key"
 
   - name: postgres
     type: pem
     certificate:
       - label: pg_pub_cert
-        content: B64:<iviadcdb_ca.pem>
+        content: "@iviadcdb_pub.crt"
 
 runtime_db: hvdb
 session_cache:

@@ -44,7 +44,10 @@ class MdocMdlScenario(BaseScenario):
                 "schema_id": credSchemaId,
                 "credential_document_type": [ self.getDocType() ],
                 "credential_format": "mso_mdoc", 
-                "cryptographic_binding_methods": [],
+                "cryptographic_binding_methods": [ "did:key" ],
+                "key_proof_types": {
+                    "jwt": [ "EdDSA" ]
+                },
                 "credential_signing_algorithm": "EdDSA"
             }
             resp = env.diagency_post(env.get_issuer_token(), "v2.0/diagency/credential_definitions", created_obj)
