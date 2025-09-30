@@ -2,6 +2,7 @@ from config.Environment import Environment
 from scenarios.MdocMdlAamva import MdocMdlAamva
 from scenarios.MdocMdlScenario import MdocMdlScenario
 import argparse
+import os
 
 # Get command line options...
 parser = argparse.ArgumentParser("run_demonstration")
@@ -10,6 +11,9 @@ parser.add_argument("-i", "--issuance", help="Performs credential issuance betwe
 parser.add_argument("-v", "--verification", help="Performs credential verification between a holder and verifier over DIDComm for the specified format.", action="store_true", default=False)
 parser.add_argument("-d", "--deleteAgents", help="Wipes all agents and their associated data. If present, no other action is performed.", action="store_true", default=False)
 args = parser.parse_args()
+
+# Set the CA cert to be trusted for future https calls
+os.environ["REQUESTS_CA_BUNDLE"] = "../docker/iviadc-ca.pem"
 
 # Init environment
 env = Environment()

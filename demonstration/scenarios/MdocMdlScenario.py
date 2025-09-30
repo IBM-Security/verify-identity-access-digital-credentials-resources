@@ -44,11 +44,11 @@ class MdocMdlScenario(BaseScenario):
                 "schema_id": credSchemaId,
                 "credential_document_type": [ self.getDocType() ],
                 "credential_format": "mso_mdoc", 
-                "cryptographic_binding_methods": [ "did:key" ],
+                "cryptographic_binding_methods": [ "cose_key" ],
                 "key_proof_types": {
-                    "jwt": [ "EdDSA" ]
+                    "jwt": [ "Ed25519" ]
                 },
-                "credential_signing_algorithm": "EdDSA"
+                "credential_signing_algorithm": "Ed25519"
             }
             resp = env.diagency_post(env.get_issuer_token(), "v2.0/diagency/credential_definitions", created_obj)
             env.assert_obj(created_obj, resp)
@@ -58,8 +58,8 @@ class MdocMdlScenario(BaseScenario):
             print(f"Using existing cred def with id {existingDefinition['id']}...")
             return existingDefinition
 
-    def get_trusted_issuing_authority_args(self, credDef):
-        certificate = credDef["mso_mdoc"]["certificate"]
+    def get_trusted_issuing_authority_args(self, issuer_agent):
+        certificate = issuer_agent["profile"]["issuer"]["root_of_trust"]["x5c"]["certificate"]
         return [{
             "credential_document_type": self.getDocType(),
             "certificate": certificate,

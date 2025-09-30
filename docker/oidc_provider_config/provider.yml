@@ -3,6 +3,8 @@ server:
   ssl:
     key: ks:server_keys/server_key
     certificate: ks:server_keys/server_cert
+    trust_certificates:
+      - "@iviadc-ca.pem"
 definition:
   id: 1
   name: OIDC Definition
@@ -17,7 +19,7 @@ definition:
       strategy: sha512
       script: null    
   ignore_unknown_authorization_details_type: false
-  base_url: https://iviadcgw:8443/oauth2
+  base_url: https://iviadcgw:8443
   token_settings:
     issuer: https://isvaop.ibm.com
     signing_alg: RS256
@@ -42,11 +44,10 @@ authentication:
   subject_attribute_name: ""
   credentials_jwt:
     signature_validation_enforcement: false
-
-# ssl:
-#   certificate:
-#     - ks:rt_profile
-#   disable_hostname_verification: false
+  ssl:
+    certificate:
+      - "@iviadc-ca.pem"
+    disable_hostname_verification: false
 
 jwks:
   signing_keystore: isvaop_signing

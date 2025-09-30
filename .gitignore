@@ -3,6 +3,8 @@
 *.cert
 *.crt
 *.bak
+*.csr
+*.srl
 docker/config/config.yaml
 demonstration/build/*
 **/__pycache__

@@ -3,7 +3,7 @@ general:
     license:
       accept: true
       key: "LICENSE_PLACEHOLDER"
-    url: "https://iviadcgw:8443/diagency"
+    url: "https://iviadcgw:8443"
     log_level: "info"
     request_log:
       enabled: false
@@ -11,7 +11,8 @@ general:
     enable_doc_cache: false
     tls:
       private_key: !file "/var/config/iviadc_priv.key"
-      cert: !file "/var/config/iviadc_pub.crt"
+      public_key: !file "/var/config/iviadc_pub.crt"
+      ca_cert: !file "/etc/ssl/certs/iviadc-ca.pem"
     wallet:
       name: "vc"
       encryption_key: "my-key"
@@ -21,7 +22,7 @@ general:
         cert: !file "/var/config/iviadc_pub.crt"
       dynamic_client_registration:
         endpoint: "https://iviadcgw:8443/oauth2"
-        ca_cert: !file "/var/config/iviadcgw_pub.crt"
+        ca_cert: !file "/etc/ssl/certs/iviadc-ca.pem"
         client_id: "admin"
         client_secret: "secret"
         cache_access_token: true
@@ -43,10 +44,12 @@ general:
             client_id: "admin"
             client_secret: "secret"
     status_registry:
-      type: "internal"
       min_statuslist_size: 131072
       max_statuslist_size: 131072
       max_random_allocation_attempts: 100
+    oid4vci:
+      nonce:
+        private_key: !file "/var/config/oid4vci_nonce_private_key.pem"
 database:
   postgresql:
     hosts:
@@ -56,7 +59,7 @@ database:
     password: "passw0rd"
     ssl: true
     skip_hostname_verify: false
-    ca_cert: !file "/var/config/iviadcdb_pub.crt"
+    ca_cert: !file "/etc/ssl/certs/iviadc-ca.pem"
   pool:
     min_connections: 5
     max_connections: 20

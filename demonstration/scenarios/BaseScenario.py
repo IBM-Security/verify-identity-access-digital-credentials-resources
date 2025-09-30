@@ -26,7 +26,7 @@ class BaseScenario:
     def is_hyperledger_required(self):
         return False
     
-    def get_trusted_issuing_authority_args(self, credDef) -> list[dict]:
+    def get_trusted_issuing_authority_args(self, issuer_agent) -> list[dict]:
         return []
     
     def get_proof_schema_requested_attributes(self, env: Environment):
@@ -37,8 +37,8 @@ class BaseScenario:
     
     ##############################################################
 
-    def configure_trusted_issuing_authorities(self, env: Environment, credDef): 
-        trust_cfg = self.get_trusted_issuing_authority_args(credDef)
+    def configure_trusted_issuing_authorities(self, env: Environment): 
+        trust_cfg = self.get_trusted_issuing_authority_args(env.agents["issuer"])
         if len(trust_cfg) == 0:
             return
         
@@ -152,7 +152,7 @@ class BaseScenario:
         proofSchema = self.create_proof_schema(env, credSchema)
 
         # Configure trusted auths (if applicable)
-        self.configure_trusted_issuing_authorities(env, credDefinition)
+        self.configure_trusted_issuing_authorities(env)
 
         # Start credential issuance flow (Pre-connected issuer-initiated scenario for simplicity)
         if (do_issuance):

@@ -1,30 +1,17 @@
 #!/bin/bash
 
-DC_PRIVATE_KEY=iviadc_priv.key
-DC_PUBLIC_CERT=iviadc_pub.crt
-DC_PRIV_PUB=iviadc_priv_pub.pem
+# Start with iviadc.key and iviadc.crt
 
-rm -f $DC_PRIVATE_KEY
-rm -f $DC_PUBLIC_CERT
-rm -f $DC_PRIV_PUB
+PRIVATE_KEY=iviadc_priv.key
+PUBLIC_CERT=iviadc_pub.crt
+PRIV_PUB=iviadc_priv_pub.pem
+CSR=iviadc.csr
+REQ_CONF=req.conf
+CA_PUBLIC=../iviadc-ca.pem
+CA_PRIVATE=../iviadc-ca.key
 
-openssl req -x509 -newkey rsa:4096 -keyout $DC_PRIVATE_KEY -out $DC_PUBLIC_CERT -days 365 -config req.conf -nodes
+source ../run-generate-for-single-dir.sh
 
-# Not recommended for production
-chmod a+r $DC_PRIVATE_KEY
+cp -f ${PUBLIC_CERT} ../iag_config/
 
-cat $DC_PRIVATE_KEY $DC_PUBLIC_CERT > $DC_PRIV_PUB
-
-echo
-echo "Public key certificate: "
-echo
-
-openssl x509 -in $DC_PRIV_PUB -text
-
-echo
-echo "Private key details: "
-echo
-
-openssl rsa -in $DC_PRIV_PUB -text
-
-cp -f ${DC_PUBLIC_CERT} ../iag_config/
+openssl ecparam -name prime256v1 -genkey -noout -out oid4vci_nonce_private_key.pem

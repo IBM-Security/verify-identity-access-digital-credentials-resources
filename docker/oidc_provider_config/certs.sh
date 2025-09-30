@@ -1,32 +1,14 @@
 #!/bin/bash
 
-OP_PRIVATE_KEY=iviadcop_priv.key
-OP_PUBLIC_CERT=iviadcop_pub.crt
-OP_PRIV_PUBLIC=iviadcop_priv_pub.pem
-DB_CERT=iviadcdb_pub.crt
+PRIVATE_KEY=iviadcop_priv.key # pragma: allowlist secret
+PUBLIC_CERT=iviadcop_pub.crt
+PRIV_PUB=iviadcop_priv_pub.pem
+CSR=iviadcop.csr
+REQ_CONF=req.conf
+CA_PUBLIC=../iviadc-ca.pem
+CA_PRIVATE=../iviadc-ca.key
 
-rm -f $OP_PRIVATE_KEY
-rm -f $OP_PUBLIC_CERT
-rm -f $OP_PRIV_PUBLIC
+source ../run-generate-for-single-dir.sh
 
-openssl req -x509 -newkey rsa:4096 -keyout $OP_PRIVATE_KEY -out $OP_PUBLIC_CERT -days 365 -config req.conf -nodes
-
-# Not recommended for production
-chmod a+r $OP_PRIVATE_KEY
-
-cat $OP_PRIVATE_KEY $OP_PUBLIC_CERT > $OP_PRIV_PUBLIC
-
-echo
-echo "Public key certificate: "
-echo
-
-openssl x509 -in $OP_PRIV_PUBLIC -text
-
-echo
-echo "Private key details: "
-echo
-
-openssl rsa -in $OP_PRIV_PUBLIC -text
-
-cp -f ${OP_PUBLIC_CERT} ../config/
-cp -f ${OP_PUBLIC_CERT} ../iag_config/
+cp -f ${PUBLIC_CERT} ../config/
+cp -f ${PUBLIC_CERT} ../iag_config/

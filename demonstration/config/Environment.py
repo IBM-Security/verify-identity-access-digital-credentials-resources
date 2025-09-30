@@ -101,7 +101,7 @@ class Environment:
         }
 
     def get_access_token(self, client_id, client_secret):
-        resp = requests.post(f"{self.OP_BASE_URL}/token", headers={"Accept": self.JSON_MIME, "Content-Type": "application/x-www-form-urlencoded"}, verify=False, data={
+        resp = requests.post(f"{self.OP_BASE_URL}/token", headers={"Accept": self.JSON_MIME, "Content-Type": "application/x-www-form-urlencoded"}, verify=True, data={
             "grant_type": "client_credentials",
             "client_id": client_id,
             "client_secret": client_secret
@@ -111,7 +111,7 @@ class Environment:
         return resp.json()['access_token']
 
     def get_holder_access_token(self, username, password):
-        resp = requests.post(f"{self.OP_BASE_URL}/token", headers={"Accept": self.JSON_MIME, "Content-Type": "application/x-www-form-urlencoded"}, verify=False, data={
+        resp = requests.post(f"{self.OP_BASE_URL}/token", headers={"Accept": self.JSON_MIME, "Content-Type": "application/x-www-form-urlencoded"}, verify=True, data={
             "grant_type": "password",
             "client_id": "onpremise_vcholders",
             "username": username,
@@ -126,28 +126,28 @@ class Environment:
 
     def diagency_delete(self, access_token, path, expected_status = 204):
         print(f"\n\nDELETE {self.get_url(path)}")
-        resp = requests.delete(self.get_url(path), headers=self.get_headers(access_token), verify=False)
+        resp = requests.delete(self.get_url(path), headers=self.get_headers(access_token), verify=True)
         assert resp.status_code == expected_status
         print(f"\nResponse: {resp.status_code}\n")
 
     def diagency_patch(self, access_token, path, body, expected_status = 200, accept = JSON_MIME):
         print(f"\n\nPATCH {self.get_url(path)}\n{json.dumps(body, indent=4)}")
-        api_resp = requests.patch(self.get_url(path), headers=self.get_headers(access_token, accept), verify=False, json=body)
+        api_resp = requests.patch(self.get_url(path), headers=self.get_headers(access_token, accept), verify=True, json=body)
         return self.handle_api_response(api_resp, accept, expected_status)
 
     def diagency_post(self, access_token, path, body, expected_status = 201, accept = JSON_MIME):
         print(f"\n\nPOST {self.get_url(path)}\n{json.dumps(body, indent=4)}")
-        api_resp = requests.post(self.get_url(path), headers=self.get_headers(access_token, accept), verify=False, json=body)
+        api_resp = requests.post(self.get_url(path), headers=self.get_headers(access_token, accept), verify=True, json=body)
         return self.handle_api_response(api_resp, accept, expected_status)
 
     def diagency_put(self, access_token, path, body, expected_status = 200, accept = JSON_MIME):
         print(f"\n\nPUT {self.get_url(path)}\n{json.dumps(body, indent=4)}")
-        api_resp = requests.put(self.get_url(path), headers=self.get_headers(access_token, accept), verify=False, json=body)
+        api_resp = requests.put(self.get_url(path), headers=self.get_headers(access_token, accept), verify=True, json=body)
         return self.handle_api_response(api_resp, accept, expected_status)
 
     def diagency_get(self, access_token, path, expected_status = 200, accept = JSON_MIME):
         print(f"\n\nGET {self.get_url(path)}")
-        api_resp = requests.get(self.get_url(path), headers=self.get_headers(access_token, accept), verify=False)
+        api_resp = requests.get(self.get_url(path), headers=self.get_headers(access_token, accept), verify=True)
         return self.handle_api_response(api_resp, accept, expected_status)
     
     def handle_api_response(self, api_resp, accept: str, expected_status: int):

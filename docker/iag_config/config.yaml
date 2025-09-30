@@ -6,8 +6,12 @@ server:
     front_end:
       certificate:
       - "@iviadcgw_priv_pub.pem"
+      - "@iviadc-ca.pem"
     applications:
       tlsv13: true
+
+    trust_certificates:
+    - "@iviadc-ca.pem"
 
   # Enable the credviewer application.  The (un)authenticated
   # session cred can be viewed in the briser at https://<host:port>/credviewer
@@ -245,7 +249,7 @@ resource_servers:
         port: 8436
         ssl:
           certificate:
-          - "@iviadcop_pub.crt"
+          - "@iviadc-ca.pem"
 
   - path: /diagency
     transparent_path: true
