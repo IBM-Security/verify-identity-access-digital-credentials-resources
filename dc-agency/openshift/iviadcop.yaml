@@ -1,0 +1,92 @@
+##############################################################################
+# iviadcop
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: iviadcop
+  labels:
+    app: iviadcop
+
+spec:
+  serviceAccountName: isva-vc
+  automountServiceAccountToken: false
+
+  volumes:
+    - name: config-volume
+      configMap:
+        name: isva-vc-iviadcop
+    - name: ca-cert
+      configMap:
+        name: isva-vc-iviadc-ca
+
+  containers:
+    - name: iviadcop
+
+      # The fully qualified name of the image.
+      image: icr.io/ivia/ivia-oidc-provider:25.06
+
+      # The port on which the container will be listening.
+      ports:
+        - containerPort: 8436
+        
+      resources:
+        limits:
+          memory: "512Mi"
+        requests:
+          memory: "256Mi"
+
+      # Environment definition.
+      env:
+        - name: POSTGRES_USER
+          value: iviadc
+        - name: POSTGRES_PASSWORD
+          value: passw0rd
+        - name: POSTGRES_SSL_KEYDB
+          value: /var/postgres/config/iviadcdb_priv_pub.pem
+
+      volumeMounts:
+        - name: config-volume
+          mountPath: /var/isvaop/config
+        - name: ca-cert
+          mountPath: /etc/ssl/certs/iviadc-ca.pem
+          subPath: iviadc-ca.pem
+
+      # The liveness and readiness probes are used by Kubernetes 
+      # to obtain the health of the container.
+      readinessProbe:
+        httpGet:
+          path: /healthcheck/ready
+          port: 8436
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        timeoutSeconds: 30
+        periodSeconds: 30
+        successThreshold: 1
+        failureThreshold: 2
+      livenessProbe:
+        httpGet:
+          path: /healthcheck/alive
+          port: 8436
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        timeoutSeconds: 30
+        periodSeconds: 30
+        successThreshold: 1
+        failureThreshold: 10
+
+---
+# The exported services. Note this is a cluster ip service only.
+apiVersion: v1
+kind: Service
+metadata:
+  name: iviadcop
+spec:
+  ports:
+    - port: 8436
+      name: iviadcop
+      protocol: TCP
+  selector:
+    app: iviadcop
+

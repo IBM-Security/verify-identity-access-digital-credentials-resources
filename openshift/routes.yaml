@@ -1,0 +1,31 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: bank-app
+spec:
+  host: bank-dc.example.com
+  to:
+    kind: Service
+    name: bank-app
+  port:
+    targetPort: 3000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dmv-app
+spec:
+  host: dmv-dc.example.com
+  to:
+    kind: Service
+    name: dmv-app
+  port:
+    targetPort: 3000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+# Made with Bob

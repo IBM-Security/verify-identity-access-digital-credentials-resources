@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-app
+  labels:
+    app: bank-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-app
+  template:
+    metadata:
+      labels:
+        app: bank-app
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: isva-vc-repo-dal
+      containers:
+      - name: bank-app
+        image: bank-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            memory: "512Mi"
+          requests:
+            memory: "256Mi"
+        env:
+        - name: ACCOUNT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: ACCOUNT_URL
+        - name: REACT_APP_ACCOUNT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_ACCOUNT_URL
+        - name: REACT_APP_TOKEN_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_TOKEN_ENDPOINT
+        - name: BANK_AGENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: BANK_AGENT_ID
+        - name: REACT_APP_BANK_AGENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_BANK_AGENT_ID
+        - name: BANK_AGENT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: BANK_AGENT_PASSWORD
+        - name: REACT_APP_BANK_AGENT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_BANK_AGENT_PASSWORD
+        - name: EXCHANGE_TEMPLATE_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: EXCHANGE_TEMPLATE_ID
+        - name: REACT_APP_EXCHANGE_TEMPLATE_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_EXCHANGE_TEMPLATE_ID
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-app
+spec:
+  selector:
+    app: bank-app
+  ports:
+  - port: 8091
+    targetPort: 3000
+  type: ClusterIP
+
+# Made with Bob

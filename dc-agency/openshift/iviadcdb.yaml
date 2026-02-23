@@ -1,0 +1,77 @@
+##############################################################################
+# iviadcdb
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: iviadcdb
+  labels:
+    app: iviadcdb
+
+spec:
+  serviceAccountName: isva-vc
+  automountServiceAccountToken: false
+
+  volumes:
+    - name: config-volume
+      configMap:
+        name: isva-vc-iviadcdb
+        items:
+          - key: postgresql_update_hba.sh
+            path: postgresql_update_hba.sh
+          - key: iviadcdb_priv_pub.pem
+            path: iviadcdb_priv_pub.pem
+    - name: ca-cert
+      configMap:
+        name: isva-vc-iviadc-ca
+
+  containers:
+    - name: iviadcdb
+
+      # The fully qualified name of the verify-access image.
+      image: icr.io/ivia/ivia-postgresql:11.0.1.0
+
+      # The port on which the container will be listening.
+      ports:
+        - containerPort: 5432
+        
+      resources:
+        limits:
+          memory: "512Mi"
+        requests:
+          memory: "256Mi"
+
+      # Environment definition.
+      env:
+        - name: POSTGRES_USER
+          value: iviadc
+        - name: POSTGRES_PASSWORD
+          value: passw0rd
+        - name: POSTGRES_SSL_KEYDB
+          value: /var/postgres/config/iviadcdb_priv_pub.pem
+
+
+      volumeMounts:
+        - name: config-volume
+          mountPath: /docker-entrypoint-initdb.d/postgresql_update_hba.sh
+          subPath: postgresql_update_hba.sh
+        - name: config-volume
+          mountPath: /var/postgres/config
+        - name: ca-cert
+          mountPath: /etc/ssl/certs/iviadc-ca.pem
+          subPath: iviadc-ca.pem
+
+---
+# The exported services. Note this is a cluster ip service only.
+apiVersion: v1
+kind: Service
+metadata:
+  name: iviadcdb
+spec:
+  ports:
+    - port: 5432
+      name: iviadcdb
+      protocol: TCP
+  selector:
+    app: iviadcdb

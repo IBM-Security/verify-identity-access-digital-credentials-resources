@@ -1,0 +1,147 @@
+/* Material UI doesn't require as much custom SCSS as Carbon Design System */
+/* Most styling is done through the sx prop and theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', sans-serif;
+  color: #1A1A1A;
+  background-color: #FFFFFF;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.bank-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom button styles */
+.MuiButton-containedPrimary {
+  background-color: #5E5CFF;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(94, 92, 255, 0.25);
+}
+
+.MuiButton-containedPrimary:hover {
+  background-color: #4A48E0;
+}
+
+/* Typography adjustments */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Apply animations to specific elements */
+.MuiCard-root, .MuiPaper-root {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3 {
+  animation: slideUp 0.5s ease-out;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(94, 92, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(94, 92, 255, 0.5);
+}
+
+/* Card and paper styling */
+.MuiCard-root, .MuiPaper-root {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.MuiCard-root:hover, .MuiPaper-root:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Link styling */
+a {
+  color: #5E5CFF;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #4A48E0;
+}
+
+/* Stats section styling */
+.stats-section {
+  background-color: #5E5CFF;
+  color: white;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+/* Pricing cards */
+.pricing-card {
+  border: 1px solid #EEEEEE;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+  border-color: #5E5CFF;
+  box-shadow: 0 10px 30px rgba(94, 92, 255, 0.1);
+}
+
+.pricing-card.featured {
+  background-color: #1A1A4B;
+  color: white;
+}

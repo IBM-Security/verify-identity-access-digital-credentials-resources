@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dmv-app
+  labels:
+    app: dmv-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dmv-app
+  template:
+    metadata:
+      labels:
+        app: dmv-app
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: isva-vc-repo-dal
+      containers:
+      - name: dmv-app
+        image: dmv-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            memory: "512Mi"
+          requests:
+            memory: "256Mi"
+        env:
+        - name: ACCOUNT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: ACCOUNT_URL
+        - name: REACT_APP_ACCOUNT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_ACCOUNT_URL
+        - name: REACT_APP_TOKEN_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_TOKEN_ENDPOINT
+        - name: DMV_AGENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: DMV_AGENT_ID
+        - name: REACT_APP_DMV_AGENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_DMV_AGENT_ID
+        - name: DMV_AGENT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: DMV_AGENT_PASSWORD
+        - name: REACT_APP_DMV_AGENT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_DMV_AGENT_PASSWORD
+        - name: CREDENTIAL_SCHEMA_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: CREDENTIAL_SCHEMA_ID
+        - name: REACT_APP_CREDENTIAL_SCHEMA_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_CREDENTIAL_SCHEMA_ID
+        - name: CREDENTIAL_DEFINITION_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: CREDENTIAL_DEFINITION_ID
+        - name: REACT_APP_CREDENTIAL_DEFINITION_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_CREDENTIAL_DEFINITION_ID
+        - name: REACT_APP_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_CLIENT_ID
+        - name: REACT_APP_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_CLIENT_SECRET
+        - name: REACT_APP_DMV_REDIRECT_URL
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: DMV_REDIRECT_URL
+        - name: W3_ROOT
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: W3_ROOT
+        - name: REACT_APP_W3_ROOT
+          valueFrom:
+            configMapKeyRef:
+              name: oid4vc-config
+              key: REACT_APP_W3_ROOT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dmv-app
+spec:
+  selector:
+    app: dmv-app
+  ports:
+  - port: 8090
+    targetPort: 3000
+  type: ClusterIP
+
+# Made with Bob

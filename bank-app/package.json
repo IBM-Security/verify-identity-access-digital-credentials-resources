@@ -1,0 +1,53 @@
+{
+    "name": "bank-app",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
+        "@mui/icons-material": "^7.0.0",
+        "@mui/material": "^7.0.0",
+        "body-parser": "^2.2.0",
+        "express": "^5.2.1",
+        "express-session": "^1.19.0",
+        "qrcode": "^1.5.4",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router-dom": "^7.13.0"
+    },
+    "devDependencies": {
+        "@types/node": "^24.9.1",
+        "@types/qrcode": "^1.5.5",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.2.2",
+        "@vitejs/plugin-react": "^5.0.0",
+        "sass": "^1.69.0",
+        "typescript": "^5.9.3",
+        "vite": "^7.0.0"
+    },
+    "scripts": {
+        "dev": "vite",
+        "start": "node server.mjs",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "files": [
+        "public/"
+    ],
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "overrides": {
+        "esbuild": "^0.27.3"
+    }
+}

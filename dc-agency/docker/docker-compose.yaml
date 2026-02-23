@@ -1,0 +1,57 @@
+services:
+  iviadcdb:
+    container_name: iviadcdb
+    image: icr.io/ivia/ivia-postgresql:11.0.2.0
+    environment:
+      POSTGRES_USER: iviadc
+      POSTGRES_PASSWORD: passw0rd
+      POSTGRES_SSL_KEYDB: /var/postgres/config/iviadcdb_priv_pub.pem
+    volumes:
+      - ./postgres_config:/var/postgres/config:ro
+      - ./postgres_config/postgresql_update_hba.sh:/docker-entrypoint-initdb.d/postgresql_update_hba.sh:ro
+      - ./iviadc-ca.pem:/etc/ssl/certs/iviadc-ca.pem:ro
+  iviadcop:
+    container_name: iviadcop
+    image: icr.io/ivia/ivia-oidc-provider:25.10
+    ports:
+      - "8436:8436"
+    volumes:
+      - ./oidc_provider_config:/var/isvaop/config
+      - ./iviadc-ca.pem:/etc/ssl/certs/iviadc-ca.pem:ro
+      - ./iviadc-ca.pem:/var/isvaop/config/iviadc-ca.pem:ro
+    depends_on:
+      - iviadcdb
+  iviadcgw:
+    container_name: iviadcgw
+    image: icr.io/ibmappgateway/ibm-application-gateway:25.12
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./iag_config:/var/iag/config
+      - ./iviadc-ca.pem:/etc/ssl/certs/iviadc-ca.pem:ro
+      - ./iviadc-ca.pem:/var/iag/config/iviadc-ca.pem:ro
+    depends_on:
+      - iviadcop
+  iviadc:
+    container_name: iviadc
+    image: icr.io/ivia/ivia-digital-credentials:25.12
+    ports:
+      - "9720:9720"
+    volumes:
+      - ./config:/var/config:ro
+      - ./iviadc-ca.pem:/etc/ssl/certs/iviadc-ca.pem:ro
+    environment:
+      YAML_FILE: /var/config/config.yaml
+      IBM_API_EXPLORER: 1
+    healthcheck:
+      test: ["CMD-SHELL", "/sbin/health_check.sh"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      - iviadcdb
+      - iviadcop
+      - iviadcgw
+networks:
+  default:
+    name: iviadc-demo

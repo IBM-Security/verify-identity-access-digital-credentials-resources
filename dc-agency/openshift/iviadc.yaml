@@ -1,0 +1,104 @@
+##############################################################################
+# iviadc
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: iviadc
+  labels:
+    app: iviadc
+
+spec:
+  serviceAccountName: isva-vc
+  automountServiceAccountToken: false
+  volumes:
+    - name: config-volume
+      configMap:
+        name: isva-vc-iviadcvc
+    - name: ca-cert
+      configMap:
+        name: isva-vc-iviadc-ca
+
+  imagePullSecrets:
+  - name: isva-vc-repo-dal
+
+  containers:
+    - name: iviadc
+
+      # The fully qualified name of the image.
+      image: icr.io/ivia/ivia-digital-credentials:25.12
+      imagePullPolicy: Always
+
+      # The port on which the container will be listening.
+      ports:
+        - containerPort: 9720
+        
+      resources:
+        limits:
+          memory: "512Mi"
+        requests:
+          memory: "256Mi"
+
+      # Environment definition.
+      env:
+        - name: YAML_FILE
+          value: /var/config/config.yaml
+        - name: LOGGING_CONSOLE_FORMAT
+          value: "basic"
+        - name: IBM_API_EXPLORER
+          value: "1"
+
+      volumeMounts:
+        - name: config-volume
+          mountPath: /var/config
+        - name: ca-cert
+          mountPath: /etc/ssl/certs/iviadc-ca.pem
+          subPath: iviadc-ca.pem
+
+      # The liveness and readiness probes are used by Kubernetes
+      # to obtain the health of the container.
+      livenessProbe:
+        exec:
+          command:
+          - /sbin/health_check.sh
+          - liveness
+        initialDelaySeconds: 5
+        periodSeconds: 15
+        timeoutSeconds: 5
+        failureThreshold: 20
+
+      readinessProbe:
+        exec:
+          command:
+          - /sbin/health_check.sh
+          - readiness
+        initialDelaySeconds: 5
+        periodSeconds: 15
+        timeoutSeconds: 5
+        failureThreshold: 20
+
+      startupProbe:
+        exec:
+          command:
+          - /sbin/health_check.sh
+          - startup
+        initialDelaySeconds: 10
+        periodSeconds: 15
+        timeoutSeconds: 5
+        failureThreshold: 30
+
+---
+# The exported services. Note this is a cluster ip service only.
+apiVersion: v1
+kind: Service
+metadata:
+  name: iviadc
+spec:
+  ports:
+    - port: 9720
+      name: iviadc
+      protocol: TCP
+  selector:
+    app: iviadc
+

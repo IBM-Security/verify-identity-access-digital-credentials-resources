@@ -1,0 +1,16 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: iviadcgw
+
+spec:
+  host: gateway-dc.example.com
+  to:
+    kind: Service
+    name: iviadcgw
+    weight: 100
+  port:
+    targetPort: 8443
+  tls:
+    termination: passthrough
+  wildcardPolicy: None

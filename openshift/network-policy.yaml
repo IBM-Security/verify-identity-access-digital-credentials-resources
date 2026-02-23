@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dmv-app-allow-verify-and-dns
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: dmv-app
+  policyTypes:
+  - Egress
+  egress:
+  # allow cluster DNS
+  - to:
+    - ipBlock:
+        cidr: 172.21.0.10/32
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
